@@ -23,6 +23,10 @@ interface TunnelNotificationService {
 
     fun showSeamlessRecoveryAttempt(tunnelName: String)
 
+    fun showVpnOff(targetTunnelName: String?)
+
+    fun removeVpnOff()
+
     fun showVpnRequired()
 
     fun showSocks5PortUnavailable(port: Int, tunnelName: String)

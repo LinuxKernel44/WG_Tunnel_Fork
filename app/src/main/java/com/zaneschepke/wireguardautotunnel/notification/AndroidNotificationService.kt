@@ -225,6 +225,8 @@ class AndroidNotificationService(override val context: Context) : NotificationSe
                 Builder(context, context.getString(R.string.errors_channel_id))
             NotificationChannels.Events ->
                 Builder(context, context.getString(R.string.events_channel_id))
+            NotificationChannels.VpnOff ->
+                Builder(context, context.getString(R.string.vpn_off_channel_id))
         }
     }
 
@@ -260,9 +262,15 @@ class AndroidNotificationService(override val context: Context) : NotificationSe
         data object App :
             NotificationChannels(channelId = R.string.app_channel_id, importance = IMPORTANCE_LOW)
 
+        data object VpnOff :
+            NotificationChannels(
+                channelId = R.string.vpn_off_channel_id,
+                importance = IMPORTANCE_LOW,
+            )
+
         companion object {
             val all: List<NotificationChannels> =
-                listOf(Errors, Events, App, Tunnel.VPN, Tunnel.Proxy, AutoTunnel)
+                listOf(Errors, Events, App, VpnOff, Tunnel.VPN, Tunnel.Proxy, AutoTunnel)
         }
     }
 
@@ -281,6 +289,8 @@ class AndroidNotificationService(override val context: Context) : NotificationSe
                 NotificationChannels.Events ->
                     R.string.events to R.string.events_channel_description
                 NotificationChannels.App -> R.string.app to R.string.app_channel_description
+                NotificationChannels.VpnOff ->
+                    R.string.vpn_off to R.string.vpn_off_channel_description
             }
 
         return NotificationChannel(

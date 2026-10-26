@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import com.zaneschepke.wireguardautotunnel.core.orchestration.AutoTunnelCoordinator
 import com.zaneschepke.wireguardautotunnel.core.orchestration.TunnelCoordinator
+import com.zaneschepke.wireguardautotunnel.core.tunnel.VpnOffNotifier
 import com.zaneschepke.wireguardautotunnel.di.Scope
 import com.zaneschepke.wireguardautotunnel.domain.enums.NotificationAction
 import com.zaneschepke.wireguardautotunnel.notification.NotificationService
@@ -20,6 +21,8 @@ class NotificationActionReceiver : BroadcastReceiver(), KoinComponent {
     private val tunnelCoordinator: TunnelCoordinator by inject()
 
     private val autoTunnelCoordinator: AutoTunnelCoordinator by inject()
+
+    private val vpnOffNotifier: VpnOffNotifier by inject()
 
     private val applicationScope: CoroutineScope = get(named(Scope.APPLICATION))
 
@@ -45,6 +48,10 @@ class NotificationActionReceiver : BroadcastReceiver(), KoinComponent {
 
                 NotificationAction.STOP_ALL.name -> {
                     tunnelCoordinator.stopActiveTunnels()
+                }
+
+                NotificationAction.REACTIVATE.name -> {
+                    vpnOffNotifier.reactivate()
                 }
             }
         }

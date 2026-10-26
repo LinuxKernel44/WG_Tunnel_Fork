@@ -6,13 +6,15 @@ import com.zaneschepke.wireguardautotunnel.R
 enum class NotificationAction {
     TUNNEL_OFF,
     AUTO_TUNNEL_OFF,
-    STOP_ALL;
+    STOP_ALL,
+    REACTIVATE;
 
     fun title(context: Context): String {
         return when (this) {
             TUNNEL_OFF -> context.getString(R.string.stop)
             AUTO_TUNNEL_OFF -> context.getString(R.string.stop)
             STOP_ALL -> context.getString(R.string.stop_all)
+            REACTIVATE -> context.getString(R.string.reactivate)
         }
     }
 }

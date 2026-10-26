@@ -10,6 +10,7 @@ import com.zaneschepke.wireguardautotunnel.domain.enums.TunnelActionSource
 import com.zaneschepke.wireguardautotunnel.notification.AndroidNotificationService.NotificationChannels
 import com.zaneschepke.wireguardautotunnel.notification.NotificationService.Companion.TUNNEL_ERROR_NOTIFICATION_ID
 import com.zaneschepke.wireguardautotunnel.notification.NotificationService.Companion.TUNNEL_MESSAGES_NOTIFICATION_ID
+import com.zaneschepke.wireguardautotunnel.notification.NotificationService.Companion.VPN_OFF_NOTIFICATION_ID
 import com.zaneschepke.wireguardautotunnel.ui.state.DisplayTunnelState
 
 class AndroidTunnelNotificationService(private val notificationService: NotificationService) :
@@ -227,6 +228,37 @@ class AndroidTunnelNotificationService(private val notificationService: Notifica
             title = "${context.getString(R.string.seamless_recovery)} • $tunnelName",
             message = context.getString(R.string.seamless_recovery_attempt_message),
         )
+    }
+
+    override fun showVpnOff(targetTunnelName: String?) {
+        val notification =
+            notificationService.createNotification(
+                channel = NotificationChannels.VpnOff,
+                title = context.getString(R.string.vpn_off_notification_title),
+                description =
+                    targetTunnelName?.let {
+                        context.getString(R.string.vpn_off_notification_message, it)
+                    } ?: "",
+                actions =
+                    if (targetTunnelName != null) {
+                        listOf(
+                            notificationService.createNotificationAction(
+                                notificationAction = NotificationAction.REACTIVATE,
+                                authenticationRequired = true,
+                            )
+                        )
+                    } else {
+                        emptyList()
+                    },
+                showTimestamp = false,
+                onGoing = true,
+            )
+
+        notificationService.show(VPN_OFF_NOTIFICATION_ID, notification)
+    }
+
+    override fun removeVpnOff() {
+        notificationService.remove(VPN_OFF_NOTIFICATION_ID)
     }
 
     override fun showVpnRequired() {

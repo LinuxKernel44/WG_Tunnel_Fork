@@ -14,6 +14,7 @@ import com.zaneschepke.wireguardautotunnel.core.tunnel.AppProvider
 import com.zaneschepke.wireguardautotunnel.core.tunnel.TunnelBackendProvider
 import com.zaneschepke.wireguardautotunnel.core.tunnel.TunnelOriginHolder
 import com.zaneschepke.wireguardautotunnel.core.tunnel.TunnelProvider
+import com.zaneschepke.wireguardautotunnel.core.tunnel.VpnOffNotifier
 import com.zaneschepke.wireguardautotunnel.domain.repository.AutoTunnelSettingsRepository
 import com.zaneschepke.wireguardautotunnel.lifecyle.AppVisibilityObserver
 import com.zaneschepke.wireguardautotunnel.notification.AndroidTunnelNotificationService
@@ -43,6 +44,8 @@ val tunnelBackendProviderModule = module {
     singleOf(::TunnelEventDispatcher)
 
     singleOf(::TunnelOriginHolder)
+
+    singleOf(::VpnOffNotifier)
 
     single {
         AppProvider(

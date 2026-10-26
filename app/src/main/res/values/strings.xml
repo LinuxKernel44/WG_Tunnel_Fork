@@ -580,6 +580,11 @@
     <string name="errors_channel_description">A channel for application and tunnel errors</string>
     <string name="events_channel_description">A channel for app events, like automation event</string>
     <string name="app_channel_id" translatable="false">App Channel</string>
+    <string name="vpn_off_channel_id" translatable="false">VPN Off Channel</string>
+    <string name="vpn_off_channel_description">A persistent notification, shown after you turn the VPN off, to quickly turn it back on</string>
+    <string name="vpn_off_notification_title">VPN is off</string>
+    <string name="vpn_off_notification_message">Reactivate to connect %1$s</string>
+    <string name="reactivate">Reactivate</string>
     <string name="app">App</string>
     <string name="app_channel_description">A channel for general application notifications, like version updates</string>
     <string name="stop_all">Stop all</string>
