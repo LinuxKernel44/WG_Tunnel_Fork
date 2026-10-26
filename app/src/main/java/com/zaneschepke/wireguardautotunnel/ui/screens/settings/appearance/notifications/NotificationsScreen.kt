@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Launch
 import androidx.compose.material.icons.outlined.AltRoute
 import androidx.compose.material.icons.outlined.NotificationsActive
+import androidx.compose.material.icons.outlined.NotificationsOff
 import androidx.compose.material.icons.outlined.Replay
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.SwapVert
@@ -48,6 +49,29 @@ fun NotificationsScreen(viewModel: SettingsViewModel = koinViewModel()) {
                 trailing = { Icon(Icons.AutoMirrored.Outlined.Launch, null) },
                 onClick = { context.launchNotificationSettings() },
             )
+            if (!settingsState.isLoading) {
+                val settings = settingsState.settings
+                SurfaceRow(
+                    leading = { Icon(Icons.Outlined.NotificationsOff, contentDescription = null) },
+                    title = stringResource(R.string.silence_seamless_recovery_notification),
+                    trailing = {
+                        ThemedSwitch(
+                            checked = settings.isSeamlessRecoveryNotificationSilenced,
+                            onClick = { viewModel.setSeamlessRecoveryNotificationSilenced(it) },
+                        )
+                    },
+                    description = {
+                        DescriptionText(
+                            stringResource(R.string.silence_seamless_recovery_notification_desc)
+                        )
+                    },
+                    onClick = {
+                        viewModel.setSeamlessRecoveryNotificationSilenced(
+                            !settings.isSeamlessRecoveryNotificationSilenced
+                        )
+                    },
+                )
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA && !settingsState.isLoading) {
                 val settings = settingsState.settings
                 SurfaceRow(

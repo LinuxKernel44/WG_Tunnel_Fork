@@ -48,4 +48,6 @@ data class GeneralSettings(
     val isNotificationRecoveryEnabled: Boolean = false,
     @ColumnInfo(name = "notification_failure_tint", defaultValue = "0")
     val isNotificationFailureTintEnabled: Boolean = false,
+    @ColumnInfo(name = "silence_seamless_recovery_notification", defaultValue = "0")
+    val isSeamlessRecoveryNotificationSilenced: Boolean = false,
 )

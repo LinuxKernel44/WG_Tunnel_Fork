@@ -717,6 +717,8 @@
     <string name="notification_source_format">Source: %1$s</string>
     <string name="notification_transfer_format">Transfer: ↓ %1$s  ↑ %2$s</string>
     <string name="notification_recovery_format">Recovery attempts: %1$d</string>
+    <string name="silence_seamless_recovery_notification">Silence seamless recovery notification</string>
+    <string name="silence_seamless_recovery_notification_desc">Don\'t send a notification each time a tunnel is automatically recovered. The VPN notification is not affected</string>
     <string name="notification_failure_tint">Handshake warning</string>
     <string name="notification_failure_tint_desc">Tint the notification icon when a tunnel has a handshake failure</string>
     <string name="add_group">Add group</string>

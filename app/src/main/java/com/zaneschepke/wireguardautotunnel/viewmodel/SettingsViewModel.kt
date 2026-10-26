@@ -103,6 +103,10 @@ class SettingsViewModel(
         settingsRepository.upsert(state.settings.copy(isNotificationFailureTintEnabled = to))
     }
 
+    fun setSeamlessRecoveryNotificationSilenced(to: Boolean) = intent {
+        settingsRepository.upsert(state.settings.copy(isSeamlessRecoveryNotificationSilenced = to))
+    }
+
     fun setRestoreOnBootEnabled(to: Boolean) = intent {
         settingsRepository.upsert(state.settings.copy(isRestoreOnBootEnabled = to))
     }

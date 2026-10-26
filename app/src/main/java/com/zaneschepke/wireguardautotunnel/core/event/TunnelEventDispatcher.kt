@@ -4,6 +4,7 @@ import android.content.Context
 import com.dokar.sonner.ToastType
 import com.wgtunnel.backend.event.TunnelEvent
 import com.zaneschepke.wireguardautotunnel.R
+import com.zaneschepke.wireguardautotunnel.domain.repository.GeneralSettingRepository
 import com.zaneschepke.wireguardautotunnel.domain.repository.GlobalEffectRepository
 import com.zaneschepke.wireguardautotunnel.domain.repository.TunnelRepository
 import com.zaneschepke.wireguardautotunnel.domain.sideeffect.GlobalSideEffect.Snackbar
@@ -23,6 +24,7 @@ class TunnelEventDispatcher(
     private val context: Context,
     private val appVisibilityObserver: AppVisibilityObserver,
     private val globalEffectRepository: GlobalEffectRepository,
+    private val settingsRepository: GeneralSettingRepository,
 ) {
 
     @OptIn(FlowPreview::class)
@@ -139,7 +141,15 @@ class TunnelEventDispatcher(
                                 )
                             },
                             backgroundAction = {
-                                notificationManager.showSeamlessRecoveryAttempt(name)
+                                scope.launch {
+                                    if (
+                                        !settingsRepository
+                                            .getGeneralSettings()
+                                            .isSeamlessRecoveryNotificationSilenced
+                                    ) {
+                                        notificationManager.showSeamlessRecoveryAttempt(name)
+                                    }
+                                }
                             },
                         )
                     }
