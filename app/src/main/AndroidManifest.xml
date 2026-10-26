@@ -22,6 +22,11 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
+    <!--exact reactivation alarm when pausing the VPN, granted by default up to API 32-->
+    <uses-permission
+        android:name="android.permission.SCHEDULE_EXACT_ALARM"
+        android:maxSdkVersion="32" />
+
     <!--start service on boot permission-->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
@@ -226,6 +231,13 @@
                       which cannot be achieved with standard background APIs due to timing and reliability needs for
                       network connectivity monitoring."/>
         </service>
+
+        <activity
+            android:name=".ui.screens.pause.PauseDialogActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
+            android:theme="@style/Theme.WireguardAutoTunnel.Translucent" />
 
         <receiver
             android:name=".core.broadcast.RestartReceiver"

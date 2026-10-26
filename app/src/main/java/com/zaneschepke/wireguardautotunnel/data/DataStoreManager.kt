@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import java.io.IOException
@@ -31,6 +32,10 @@ class DataStoreManager(
         val shouldShowDonationSnackbar = booleanPreferencesKey("SHOW_DONATION_SNACK")
         val desktopPromptShown = booleanPreferencesKey("DESKTOP_PROMPT_SHOWN")
         val lastActiveTunnelIds = stringPreferencesKey("LAST_ACTIVE_TUNNEL_IDS")
+        val pauseActive = booleanPreferencesKey("PAUSE_ACTIVE")
+        val pauseEndsAtMs = longPreferencesKey("PAUSE_ENDS_AT_MS")
+        val pauseTunnelIds = stringPreferencesKey("PAUSE_TUNNEL_IDS")
+        val pauseAutoTunnelWasRunning = booleanPreferencesKey("PAUSE_AUTO_TUNNEL_WAS_RUNNING")
     }
 
     suspend fun init() {

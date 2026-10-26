@@ -227,6 +227,8 @@ class AndroidNotificationService(override val context: Context) : NotificationSe
                 Builder(context, context.getString(R.string.events_channel_id))
             NotificationChannels.VpnOff ->
                 Builder(context, context.getString(R.string.vpn_off_channel_id))
+            NotificationChannels.PauseAlert ->
+                Builder(context, context.getString(R.string.pause_alert_channel_id))
         }
     }
 
@@ -268,9 +270,24 @@ class AndroidNotificationService(override val context: Context) : NotificationSe
                 importance = IMPORTANCE_LOW,
             )
 
+        data object PauseAlert :
+            NotificationChannels(
+                channelId = R.string.pause_alert_channel_id,
+                importance = IMPORTANCE_HIGH,
+            )
+
         companion object {
             val all: List<NotificationChannels> =
-                listOf(Errors, Events, App, VpnOff, Tunnel.VPN, Tunnel.Proxy, AutoTunnel)
+                listOf(
+                    Errors,
+                    Events,
+                    App,
+                    VpnOff,
+                    PauseAlert,
+                    Tunnel.VPN,
+                    Tunnel.Proxy,
+                    AutoTunnel,
+                )
         }
     }
 
@@ -291,6 +308,8 @@ class AndroidNotificationService(override val context: Context) : NotificationSe
                 NotificationChannels.App -> R.string.app to R.string.app_channel_description
                 NotificationChannels.VpnOff ->
                     R.string.vpn_off to R.string.vpn_off_channel_description
+                NotificationChannels.PauseAlert ->
+                    R.string.pause_alert to R.string.pause_alert_channel_description
             }
 
         return NotificationChannel(

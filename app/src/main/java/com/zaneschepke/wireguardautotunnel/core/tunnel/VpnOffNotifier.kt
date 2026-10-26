@@ -1,5 +1,6 @@
 package com.zaneschepke.wireguardautotunnel.core.tunnel
 
+import com.zaneschepke.wireguardautotunnel.core.orchestration.PauseCoordinator
 import com.zaneschepke.wireguardautotunnel.core.orchestration.TunnelCoordinator
 import com.zaneschepke.wireguardautotunnel.domain.enums.TunnelActionSource
 import com.zaneschepke.wireguardautotunnel.domain.events.TunnelActionEvent
@@ -24,6 +25,7 @@ class VpnOffNotifier(
     private val tunnelCoordinator: TunnelCoordinator,
     private val tunnelRepository: TunnelRepository,
     private val notificationService: TunnelNotificationService,
+    private val pauseCoordinator: PauseCoordinator,
 ) {
 
     // tunnels the user stopped since a tunnel was last started
@@ -46,8 +48,9 @@ class VpnOffNotifier(
             combine(
                     userStopped,
                     tunnelCoordinator.backendStatus.map { it.activeTunnels.isEmpty() },
-                ) { stopped, idle ->
-                    stopped.isNotEmpty() && idle
+                    pauseCoordinator.state.map { it != null },
+                ) { stopped, idle, paused ->
+                    stopped.isNotEmpty() && idle && !paused
                 }
                 .distinctUntilChanged()
                 // a restart stops then starts the tunnel, don't flash the notification

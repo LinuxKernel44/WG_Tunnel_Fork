@@ -27,6 +27,14 @@ interface TunnelNotificationService {
 
     fun removeVpnOff()
 
+    fun showPaused(endsAtMs: Long?)
+
+    fun removePaused()
+
+    fun showPauseEnding()
+
+    fun removePauseEnding()
+
     fun showVpnRequired()
 
     fun showSocks5PortUnavailable(port: Int, tunnelName: String)

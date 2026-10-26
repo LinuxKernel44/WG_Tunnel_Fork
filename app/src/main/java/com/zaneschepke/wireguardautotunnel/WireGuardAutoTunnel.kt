@@ -11,6 +11,7 @@ import com.wgtunnel.backend.service.RuntimeManager
 import com.zaneschepke.logcatter.LogReader
 import com.zaneschepke.wireguardautotunnel.core.event.TunnelEventDispatcher
 import com.zaneschepke.wireguardautotunnel.core.orchestration.AppBoostrapCoordinator
+import com.zaneschepke.wireguardautotunnel.core.orchestration.PauseCoordinator
 import com.zaneschepke.wireguardautotunnel.core.orchestration.StartupCoordinator
 import com.zaneschepke.wireguardautotunnel.core.orchestration.TunnelCoordinator
 import com.zaneschepke.wireguardautotunnel.core.tunnel.AppProvider
@@ -120,6 +121,7 @@ class WireGuardAutoTunnel : Application(), KoinComponent {
         get<TunnelOriginHolder>().bind(applicationScope, tunnelCoordinator.actions)
         get<AppProvider>().bind(applicationScope)
         get<VpnOffNotifier>().bind(applicationScope)
+        get<PauseCoordinator>().bind(applicationScope)
 
         if (BuildConfig.FLAVOR == Constants.STANDALONE_FLAVOR) {
             UpdateCheckWorker.start(this)

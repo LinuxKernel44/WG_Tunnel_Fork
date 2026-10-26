@@ -1,5 +1,8 @@
 package com.zaneschepke.wireguardautotunnel.notification
 
+import android.app.PendingIntent
+import android.content.Intent
+import android.text.format.DateFormat
 import android.text.format.Formatter
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
@@ -8,10 +11,14 @@ import com.zaneschepke.wireguardautotunnel.R
 import com.zaneschepke.wireguardautotunnel.domain.enums.NotificationAction
 import com.zaneschepke.wireguardautotunnel.domain.enums.TunnelActionSource
 import com.zaneschepke.wireguardautotunnel.notification.AndroidNotificationService.NotificationChannels
+import com.zaneschepke.wireguardautotunnel.notification.NotificationService.Companion.PAUSED_NOTIFICATION_ID
+import com.zaneschepke.wireguardautotunnel.notification.NotificationService.Companion.PAUSE_ENDING_NOTIFICATION_ID
 import com.zaneschepke.wireguardautotunnel.notification.NotificationService.Companion.TUNNEL_ERROR_NOTIFICATION_ID
 import com.zaneschepke.wireguardautotunnel.notification.NotificationService.Companion.TUNNEL_MESSAGES_NOTIFICATION_ID
 import com.zaneschepke.wireguardautotunnel.notification.NotificationService.Companion.VPN_OFF_NOTIFICATION_ID
+import com.zaneschepke.wireguardautotunnel.ui.screens.pause.PauseDialogActivity
 import com.zaneschepke.wireguardautotunnel.ui.state.DisplayTunnelState
+import java.util.Date
 
 class AndroidTunnelNotificationService(private val notificationService: NotificationService) :
     TunnelNotificationService {
@@ -58,7 +65,8 @@ class AndroidTunnelNotificationService(private val notificationService: Notifica
                             notificationAction = NotificationAction.TUNNEL_OFF,
                             extraId = tunnelNotificationLines.keys.first(),
                             authenticationRequired = true,
-                        )
+                        ),
+                        createPauseAction(),
                     )
                 tunnelNotificationLines.isNotEmpty() ->
                     listOf(
@@ -66,7 +74,8 @@ class AndroidTunnelNotificationService(private val notificationService: Notifica
                             notificationAction = NotificationAction.STOP_ALL,
                             extraId = null,
                             authenticationRequired = true,
-                        )
+                        ),
+                        createPauseAction(),
                     )
                 else -> emptyList()
             }
@@ -119,6 +128,25 @@ class AndroidTunnelNotificationService(private val notificationService: Notifica
             chronometerBaseMillis = chronometerBaseMillis,
             color = color,
         )
+    }
+
+    // opens the duration dialog, since a notification can't show one itself
+    private fun createPauseAction(): NotificationCompat.Action {
+        val pendingIntent =
+            PendingIntent.getActivity(
+                context,
+                0,
+                Intent(context, PauseDialogActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            )
+        return NotificationCompat.Action.Builder(
+                R.drawable.qs_logo,
+                NotificationAction.PAUSE.title(context),
+                pendingIntent,
+            )
+            .setAuthenticationRequired(true)
+            .build()
     }
 
     private fun formatLine(
@@ -259,6 +287,63 @@ class AndroidTunnelNotificationService(private val notificationService: Notifica
 
     override fun removeVpnOff() {
         notificationService.remove(VPN_OFF_NOTIFICATION_ID)
+    }
+
+    override fun showPaused(endsAtMs: Long?) {
+        val description =
+            if (endsAtMs != null) {
+                context.getString(
+                    R.string.pause_notification_resumes_at,
+                    DateFormat.getTimeFormat(context).format(Date(endsAtMs)),
+                )
+            } else {
+                context.getString(R.string.pause_notification_until_resumed)
+            }
+        val notification =
+            notificationService.createNotification(
+                channel = NotificationChannels.VpnOff,
+                title = context.getString(R.string.pause_notification_title),
+                description = description,
+                actions =
+                    listOf(
+                        notificationService.createNotificationAction(
+                            notificationAction = NotificationAction.RESUME,
+                            authenticationRequired = true,
+                        )
+                    ),
+                showTimestamp = false,
+                onGoing = true,
+            )
+
+        notificationService.show(PAUSED_NOTIFICATION_ID, notification)
+    }
+
+    override fun removePaused() {
+        notificationService.remove(PAUSED_NOTIFICATION_ID)
+    }
+
+    override fun showPauseEnding() {
+        val notification =
+            notificationService.createNotification(
+                channel = NotificationChannels.PauseAlert,
+                title = context.getString(R.string.pause_ending_title),
+                description = context.getString(R.string.pause_ending_message),
+                actions =
+                    listOf(
+                            NotificationAction.PAUSE_ADD_5_MIN,
+                            NotificationAction.PAUSE_ADD_15_MIN,
+                            NotificationAction.PAUSE_INDEFINITE,
+                        )
+                        .map { notificationService.createNotificationAction(it) },
+                showTimestamp = false,
+                onlyAlertOnce = false,
+            )
+
+        notificationService.show(PAUSE_ENDING_NOTIFICATION_ID, notification)
+    }
+
+    override fun removePauseEnding() {
+        notificationService.remove(PAUSE_ENDING_NOTIFICATION_ID)
     }
 
     override fun showVpnRequired() {

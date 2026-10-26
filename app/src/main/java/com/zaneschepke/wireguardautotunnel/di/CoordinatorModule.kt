@@ -4,10 +4,12 @@ import com.zaneschepke.wireguardautotunnel.core.orchestration.AppBoostrapCoordin
 import com.zaneschepke.wireguardautotunnel.core.orchestration.AutoTunnelCoordinator
 import com.zaneschepke.wireguardautotunnel.core.orchestration.DnsSettingsCoordinator
 import com.zaneschepke.wireguardautotunnel.core.orchestration.FileExportCoordinator
+import com.zaneschepke.wireguardautotunnel.core.orchestration.PauseCoordinator
 import com.zaneschepke.wireguardautotunnel.core.orchestration.ShortcutCoordinator
 import com.zaneschepke.wireguardautotunnel.core.orchestration.StartupCoordinator
 import com.zaneschepke.wireguardautotunnel.core.orchestration.TunnelBackendCoordinator
 import com.zaneschepke.wireguardautotunnel.core.orchestration.TunnelCoordinator
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
@@ -19,6 +21,19 @@ val coordinatorModule = module {
     singleOf(::StartupCoordinator)
     singleOf(::AutoTunnelCoordinator)
     singleOf(::DnsSettingsCoordinator)
+    single {
+        PauseCoordinator(
+            context = androidContext(),
+            dataStoreManager = get(),
+            tunnelCoordinator = get(),
+            autoTunnelCoordinator = get(),
+            autoTunnelStateHolder = get(),
+            serviceManager = get(),
+            tunnelRepository = get(),
+            notificationService = get(),
+            scope = get(named(Scope.APPLICATION)),
+        )
+    }
     single {
         TunnelCoordinator(
             get(),

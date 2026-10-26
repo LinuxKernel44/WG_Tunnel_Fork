@@ -61,6 +61,8 @@ interface NotificationService {
         const val UPDATE_READY_NOTIFICATION_ID = 126
         const val UPDATE_FAILED_NOTIFICATION_ID = 127
         const val VPN_OFF_NOTIFICATION_ID = 128
+        const val PAUSED_NOTIFICATION_ID = 129
+        const val PAUSE_ENDING_NOTIFICATION_ID = 130
         const val EXTRA_ID = "id"
         const val EXTRA_OPEN_SUPPORT = "open_support"
         // Open Support and scroll to the update row, without checking for an update

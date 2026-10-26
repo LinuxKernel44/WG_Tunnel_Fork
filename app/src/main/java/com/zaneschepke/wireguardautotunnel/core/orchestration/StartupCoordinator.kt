@@ -13,12 +13,17 @@ class StartupCoordinator(
     private val tunnelRepository: TunnelRepository,
     private val bootstrapCoordinator: AppBoostrapCoordinator,
     private val appStateRepository: AppStateRepository,
+    private val pauseCoordinator: PauseCoordinator,
 ) {
 
     @Volatile private var vpnRevokedThisProcess = false
     @Volatile private var stickyRestoreRequested = false
 
     suspend fun applyStartupPolicy(): Result<Unit> = runCatching {
+        if (pauseCoordinator.handleStartup()) {
+            Timber.d("Boot policy: paused, skipping restore")
+            return@runCatching
+        }
         val shouldRestoreAutoTunnel = autoTunnelCoordinator.shouldRestoreOnBoot()
         val settings = settingsRepository.getGeneralSettings()
         val shouldRestoreDefaultTunnel = settings.isRestoreOnBootEnabled
@@ -69,6 +74,11 @@ class StartupCoordinator(
         }
 
         bootstrapCoordinator.isReady.first { it }
+
+        if (pauseCoordinator.handleStartup()) {
+            Timber.d("$reason: paused, skipping restore")
+            return@runCatching
+        }
 
         if (autoTunnelCoordinator.isEnabled()) {
             Timber.d("$reason: resuming auto-tunnel")

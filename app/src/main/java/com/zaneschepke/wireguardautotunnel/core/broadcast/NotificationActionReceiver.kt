@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.zaneschepke.wireguardautotunnel.core.orchestration.AutoTunnelCoordinator
+import com.zaneschepke.wireguardautotunnel.core.orchestration.PauseCoordinator
 import com.zaneschepke.wireguardautotunnel.core.orchestration.TunnelCoordinator
 import com.zaneschepke.wireguardautotunnel.core.tunnel.VpnOffNotifier
 import com.zaneschepke.wireguardautotunnel.di.Scope
@@ -23,6 +24,8 @@ class NotificationActionReceiver : BroadcastReceiver(), KoinComponent {
     private val autoTunnelCoordinator: AutoTunnelCoordinator by inject()
 
     private val vpnOffNotifier: VpnOffNotifier by inject()
+
+    private val pauseCoordinator: PauseCoordinator by inject()
 
     private val applicationScope: CoroutineScope = get(named(Scope.APPLICATION))
 
@@ -53,6 +56,20 @@ class NotificationActionReceiver : BroadcastReceiver(), KoinComponent {
                 NotificationAction.REACTIVATE.name -> {
                     vpnOffNotifier.reactivate()
                 }
+
+                NotificationAction.RESUME.name -> pauseCoordinator.resume()
+
+                NotificationAction.PAUSE_ADD_5_MIN.name ->
+                    pauseCoordinator.extend(5 * PauseCoordinator.MINUTE_MS)
+
+                NotificationAction.PAUSE_ADD_15_MIN.name ->
+                    pauseCoordinator.extend(15 * PauseCoordinator.MINUTE_MS)
+
+                NotificationAction.PAUSE_INDEFINITE.name -> pauseCoordinator.makeIndefinite()
+
+                PauseCoordinator.ACTION_PAUSE_WARN -> pauseCoordinator.onWarnDue()
+
+                PauseCoordinator.ACTION_PAUSE_END -> pauseCoordinator.onEndDue()
             }
         }
     }
